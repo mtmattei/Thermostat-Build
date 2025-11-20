@@ -1,0 +1,237 @@
+﻿<Page x:Class="test.Presentation.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:test.Presentation"
+      xmlns:uen="using:Uno.Extensions.Navigation.UI"
+      xmlns:utu="using:Uno.Toolkit.UI"
+      xmlns:um="using:Uno.Material"
+      NavigationCacheMode="Required">
+	<Grid>
+		<Grid.Background>
+			<LinearGradientBrush StartPoint="0.5,0" EndPoint="0.5,1">
+				<GradientStop Color="#000000" Offset="0" />
+				<GradientStop Color="#0A1520" Offset="0.3" />
+				<GradientStop Color="#1A1530" Offset="0.7" />
+				<GradientStop Color="#2D1B4E" Offset="1" />
+			</LinearGradientBrush>
+		</Grid.Background>
+		
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<!-- Header Section -->
+		<Grid Grid.Row="0" Padding="20,48,20,16">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			
+			<Button Grid.Column="0"
+					Width="40"
+					Height="40"
+					Background="Transparent"
+					BorderThickness="0">
+				<FontIcon Glyph="&#xE700;" 
+						  FontSize="20" 
+						  Foreground="White" />
+			</Button>
+			
+			<TextBlock Grid.Column="1" 
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Left"
+					   Margin="12,0,0,0"
+					   FontSize="18"
+					   FontWeight="Normal"
+					   Foreground="White">
+				<Run Text="{Binding GreetingText}" />
+				<Run Text=", User" />
+			</TextBlock>
+			
+			<Button Grid.Column="2"
+					Width="40"
+					Height="40"
+					Background="Transparent"
+					BorderThickness="0">
+				<FontIcon Glyph="&#xE713;" 
+						  FontSize="20" 
+						  Foreground="White" />
+			</Button>
+		</Grid>
+
+		<!-- Main Content -->
+		<ScrollViewer Grid.Row="1" 
+					  VerticalScrollBarVisibility="Auto">
+			<utu:AutoLayout Padding="20" Spacing="32" Orientation="Vertical">
+				
+				<!-- Circular Thermostat Display -->
+				<Border Width="380" 
+						Height="380" 
+						HorizontalAlignment="Center"
+						CornerRadius="190"
+						Translation="0,0,32">
+					<Border.Background>
+						<SolidColorBrush Color="{ThemeResource CircleFill}" Opacity="0.6" />
+					</Border.Background>
+					<Border.Shadow>
+						<ThemeShadow />
+					</Border.Shadow>
+					
+					<local:ThermostatRenderer Progress="{Binding CurrentProgress}"
+										  CurrentTemperature="{Binding Thermostat.CurrentTemperature}"
+										  StatusText="{Binding StatusText}" />
+				</Border>				<!-- Information Cards -->
+				<Grid ColumnSpacing="16">
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					
+					<ItemsRepeater Grid.ColumnSpan="3" 
+								   ItemsSource="{Binding Metrics}">
+						<ItemsRepeater.Layout>
+							<UniformGridLayout Orientation="Horizontal" 
+											   MinItemWidth="100" 
+											   ItemsStretch="Fill" 
+											   MinColumnSpacing="16" />
+						</ItemsRepeater.Layout>
+						<ItemsRepeater.ItemTemplate>
+								<DataTemplate>
+									<Border CornerRadius="16" 
+											Padding="12,16,16,16"
+											Translation="0,0,24">
+										<Border.Background>
+											<SolidColorBrush Color="{ThemeResource CardBackground}" Opacity="0.5" />
+									</Border.Background>
+									<Border.Shadow>
+										<ThemeShadow />
+									</Border.Shadow>
+									
+									<utu:AutoLayout Spacing="8" Orientation="Vertical" HorizontalAlignment="Stretch">
+										<FontIcon Glyph="{Binding Icon}" 
+												  FontSize="24">
+											<FontIcon.Foreground>
+												<SolidColorBrush Color="{Binding IconColor}" />
+											</FontIcon.Foreground>
+										</FontIcon>
+										
+										<utu:AutoLayout Spacing="4" Orientation="Horizontal" VerticalAlignment="Bottom">
+											<TextBlock Text="{Binding Value}" 
+													   FontSize="28" 
+													   FontWeight="SemiBold" 
+													   Foreground="White" />
+											<TextBlock Text="{Binding Unit}" 
+													   FontSize="16" 
+													   Foreground="{ThemeResource LightGray}" 
+													   Margin="0,0,0,4" />
+										</utu:AutoLayout>
+										
+										<TextBlock Text="{Binding Label}" 
+												   FontSize="12" 
+												   Foreground="{ThemeResource LightGray}" />
+									</utu:AutoLayout>
+								</Border>
+							</DataTemplate>
+						</ItemsRepeater.ItemTemplate>
+					</ItemsRepeater>
+				</Grid>
+
+				<!-- Energy Usage Chart -->
+				<Border CornerRadius="20" 
+						Padding="24"
+						Translation="0,0,24">
+					<Border.Background>
+						<SolidColorBrush Color="{ThemeResource CardBackground}" Opacity="0.4" />
+					</Border.Background>
+					<Border.Shadow>
+						<ThemeShadow />
+					</Border.Shadow>
+					
+					<utu:AutoLayout Spacing="16" Orientation="Vertical">
+						<utu:AutoLayout Spacing="12" Orientation="Horizontal">
+							<FontIcon Glyph="&#xE945;" 
+									  FontSize="20" 
+									  Foreground="White" 
+									  VerticalAlignment="Center" />
+							<TextBlock Text="Energy Usage" 
+									   FontSize="16" 
+									   FontWeight="SemiBold" 
+									   Foreground="White" 
+									   VerticalAlignment="Center" />
+						</utu:AutoLayout>
+						
+						<local:ChartRenderer Data="{Binding EnergyData}" />
+					</utu:AutoLayout>
+				</Border>
+
+			</utu:AutoLayout>
+		</ScrollViewer>
+
+		<!-- Bottom Navigation -->
+		<utu:NavigationBar Grid.Row="2" Background="#0A0A0A">
+			<utu:NavigationBar.Content>
+				<Grid Height="90">
+					<ItemsControl HorizontalAlignment="Center" VerticalAlignment="Center">
+						<ItemsControl.ItemsPanel>
+							<ItemsPanelTemplate>
+								<StackPanel Orientation="Horizontal" Spacing="32" />
+							</ItemsPanelTemplate>
+						</ItemsControl.ItemsPanel>
+						<ItemsControl.Items>
+							<!-- Home -->
+							<Button Width="56" Height="56" 
+									Background="Transparent" 
+									BorderThickness="0" 
+									Padding="0">
+								<FontIcon Glyph="&#xE80F;" 
+										  FontSize="24" 
+										  Foreground="#888888" />
+							</Button>
+							
+							<!-- Menu -->
+							<Button Width="56" Height="56" 
+									Background="Transparent" 
+									BorderThickness="0" 
+									Padding="0">
+								<FontIcon Glyph="&#xE8FD;" 
+										  FontSize="24" 
+										  Foreground="#888888" />
+							</Button>
+							
+							<!-- Activity (Selected) -->
+							<Button Width="56" 
+									Height="56" 
+									Padding="0"
+									CornerRadius="28"
+									BorderThickness="0">
+								<Button.Background>
+									<LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+										<GradientStop Color="#8B5CF6" Offset="0" />
+										<GradientStop Color="#3B82F6" Offset="1" />
+									</LinearGradientBrush>
+								</Button.Background>
+								<FontIcon Glyph="&#xEC4F;" 
+										  FontSize="24" 
+										  Foreground="White" />
+							</Button>
+							
+							<!-- Profile -->
+							<Button Width="56" Height="56" 
+									Background="Transparent" 
+									BorderThickness="0" 
+									Padding="0">
+								<FontIcon Glyph="&#xE77B;" 
+										  FontSize="24" 
+										  Foreground="#888888" />
+							</Button>
+						</ItemsControl.Items>
+					</ItemsControl>
+				</Grid>
+			</utu:NavigationBar.Content>
+		</utu:NavigationBar>
+	</Grid>
+</Page>
